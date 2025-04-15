@@ -6,13 +6,21 @@
             <h4>Selamat Datang, Administrator!</h4>
             <div class="d-flex justify-content-center align-items-start">
                 <div class="me-5">
-                    <canvas id="chartjs-bar" width="750" height="370"></canvas>
+                    {{-- <canvas id="chartjs-bar" width="750" height="370"></canvas> --}}
+        <canvas id="salesChart" width="750" height="370"></canvas> <!-- bar chart -->
+
                 </div>
                 <div class="align-self-end">
-                    <canvas id="chartjs-pie" width="200" height="179"></canvas>
+                    {{-- <canvas id="chartjs-pie" width="200" height="179"></canvas> --}}
+<canvas id="productChart" width="200" height="179"></canvas> <!-- pie chart -->
+
                 </div>
             </div>
         </div>
+
+        {{-- <canvas id="salesChart" width="750" height="370"></canvas> <!-- bar chart -->
+<canvas id="productChart" width="200" height="179"></canvas> <!-- pie chart --> --}}
+
     
     @elseif (Auth::check() && Auth::user()->role == 'petugas')
         <div class="row">
@@ -39,53 +47,54 @@
 
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ctxBar = document.getElementById('chartjs-bar')?.getContext('2d');
-        if (ctxBar) {
-            new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['Merah', 'Biru', 'Kuning', 'Hijau'],
-                    datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5],
-                        backgroundColor: ['rgba(54, 162, 235, 0.2)'],
-                        borderColor: ['rgba(54, 162, 235, 1)'],
-                        borderWidth: 1
-                    }]
-                },
-                options: { responsive: false, scales: { y: { beginAtZero: true } } }
-            });
-        }
+    @if (auth()->user()->role === 'admin')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data
+        const sales = @json($salesData ?? []);
+        const products = @json($productSales ?? []);
+        
+        // Bar Chart
+        new Chart(document.getElementById('salesChart'), {
+            type: 'bar',
+            data: {
+                labels: sales.map(item => item.date),
+                datasets: [{
+                    label: 'Penjualan',
+                    data: sales.map(item => item.total),
+                    backgroundColor: 'rgba(34, 197, 94, 0.5)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
 
-        var ctxPie = document.getElementById('chartjs-pie')?.getContext('2d');
-        if (ctxPie) {
-            new Chart(ctxPie, {
-                type: 'pie',
-                data: {
-                    labels: ['Merah', 'Biru', 'Kuning', 'Hijau'],
-                    datasets: [{
-                        data: [12, 19, 3, 5],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(75, 192, 192, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: { responsive: false }
-            });
-        }
-    });
-</script>
+        // Pie Chart
+        new Chart(document.getElementById('productChart'), {
+            type: 'pie',
+            data: {
+                labels: products.map(item => item.name),
+                datasets: [{
+                    data: products.map(item => item.percentage),
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(250, 204, 21, 0.7)',
+                        'rgba(20, 184, 166, 0.7)',
+                        'rgba(139, 92, 246, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+    @endif
 @endsection

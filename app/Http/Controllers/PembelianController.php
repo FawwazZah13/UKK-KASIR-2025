@@ -23,7 +23,6 @@ class PembelianController extends Controller
         $pembelian = Pembelian::all();
         return view('pembelian.index', compact('pembelian'));
     }
-    
 
     /**
      * Show the form for creating a new resource.
@@ -256,6 +255,8 @@ public function export()
 {
     return Excel::download(new PembelianExport, 'data-pembelian.xlsx');
 }
+
+
 
     /**
      * Show the form for editing the specified resource.

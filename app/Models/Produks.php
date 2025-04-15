@@ -12,5 +12,9 @@ class Produks extends Model
         'stok',
         'gambar'
     ];
-    
+    public function details()
+{
+    return $this->hasMany(Detail::class, 'produk_id'); // atau relasi sesuai nama model dan tabel kamu
+}
+
 }
